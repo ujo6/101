@@ -12,25 +12,67 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        :root {
+            --bg: #06070a;
+            --bg-strong: #0b0d14;
+            --panel: rgba(10, 12, 20, 0.94);
+            --panel-2: rgba(20, 24, 36, 0.96);
+            --text: #f5f7ff;
+            --muted: #c7cfdf;
+            --line: rgba(255, 255, 255, 0.14);
+            --accent: #5f6fff;
+            --accent-2: #12185d;
+            --shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            cursor: crosshair;
         }
 
         body {
-            background: #000000;
-            color: #ffffff;
+            background: radial-gradient(circle at top left, #2f2f2f 0%, var(--bg) 45%, var(--bg-strong) 100%);
+            color: var(--text);
             font-family: 'JetBrains Mono', monospace;
             overflow-x: hidden;
         }
 
+        .magnet-dots {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.8;
+            overflow: hidden;
+        }
+
+        .magnet-dot {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 999px;
+            background: rgba(120, 125, 140, 0.35);
+            transition: transform 0.12s ease-out, background 0.2s ease-out, width 0.2s ease-out, height 0.2s ease-out;
+            will-change: transform;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
         ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #111; }
-        ::-webkit-scrollbar-thumb { background: #7b4b9a; border-radius: 2px; }
+        ::-webkit-scrollbar-track { background: #e4e7ef; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
 
         .corner-bracket {
             position: relative;
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
         }
         .corner-bracket::before {
             content: '';
@@ -39,8 +81,8 @@
             left: 0;
             width: 12px;
             height: 12px;
-            border-top: 1px solid rgba(123, 75, 154, 0.6);
-            border-left: 1px solid rgba(123, 75, 154, 0.6);
+            border-top: 1px solid rgba(12, 26, 65, 0.6);
+            border-left: 1px solid rgba(21, 9, 181, 0.6);
             pointer-events: none;
         }
         .corner-bracket::after {
@@ -78,7 +120,9 @@
         .marquee-track-no-pause {
             display: flex;
             width: max-content;
-            animation: scrollContinuous 25s linear infinite;
+            animation: scrollContinuous 16s linear infinite;
+            will-change: transform;
+            padding-right: 2rem;
         }
 
         @keyframes gradient {
@@ -102,11 +146,11 @@
         }
         @keyframes blink-caret {
             from, to { border-color: transparent; }
-            50% { border-color: #7b4b9a; }
+            50% { border-color: #0e37b2; }
         }
         .typewriter-text {
             overflow: hidden;
-            border-right: 2px solid #7b4b9a;
+            border-right: 2px solid #0e37b2;
             white-space: nowrap;
             margin: 0 auto;
             animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
@@ -125,21 +169,22 @@
         }
 
         .project-card {
-            border: 1px solid rgba(255,255,255,0.15);
-            background: #0a0a0a;
+            border: 1px solid var(--line);
+            background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
+            box-shadow: var(--shadow);
         }
         .project-card:hover {
-            border-color: #7b4b9a;
+            border-color: var(--accent);
             transform: translateY(-2px);
         }
         .project-card.expanded {
-            border-color: #7b4b9a;
-            background: #111;
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
             transform: scale(1.01);
-            box-shadow: 0 0 20px rgba(123,75,154,0.2);
+            box-shadow: 0 0 24px rgba(95,111,255,0.16);
         }
         .project-details {
             max-height: 0;
@@ -156,23 +201,24 @@
             opacity: 0;
             transition: opacity 0.2s ease;
             font-size: 0.6rem;
-            color: #7b4b9a;
+            color: #0e37b2;
         }
         .project-card:hover .click-hint {
             opacity: 1;
         }
 
         .omni-card {
-            border: 1px solid rgba(255,255,255,0.15);
-            background: #0a0a0a;
+            border: 1px solid var(--line);
+            background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            box-shadow: var(--shadow);
         }
         .omni-card:hover {
-            border-color: #7b4b9a;
+            border-color: var(--accent);
             transform: scale(1.01);
-            box-shadow: 0 0 30px rgba(123,75,154,0.2);
+            box-shadow: 0 0 30px rgba(95,111,255,0.16);
         }
         .omni-details {
             max-height: 380px;
@@ -192,7 +238,7 @@
         }
         .capability-card:hover {
             transform: translateY(-8px);
-            border-color: #7b4b9a;
+            border-color: #0e37b2;
             box-shadow: 0 15px 30px rgba(123,75,154,0.3);
         }
 
@@ -226,7 +272,7 @@
             border-radius: 50%;
         }
         .modal-close:hover {
-            border-color: #7b4b9a;
+            border-color: #0e37b2;
             transform: scale(1.1);
         }
 
@@ -256,7 +302,7 @@
             font-weight: 400;
             letter-spacing: 4px;
             text-transform: uppercase;
-            border: 1px solid #7b4b9a;
+            border: 1px solid #0e37b2;
             padding: 14px 28px;
             animation: pulseText 1.5s infinite;
         }
@@ -273,85 +319,98 @@
             z-index: 1000;
         }
         .nav-pill {
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(123,75,154,0.4);
-            padding: 6px 12px;
+            background: rgba(6, 8, 15, 0.92);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(95, 111, 255, 0.28);
+            padding: 7px 10px;
             display: flex;
-            gap: 4px;
-            border-radius: 30px;
+            gap: 6px;
+            border-radius: 999px;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 12px 28px rgba(0,0,0,0.35);
         }
         .nav-btn {
-            padding: 6px 16px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #888;
+            padding: 7px 14px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            color: #9da4b7;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             position: relative;
             overflow: hidden;
-            border-radius: 30px;
+            border-radius: 999px;
+            text-transform: uppercase;
         }
         .nav-btn span:first-child { position: relative; z-index: 10; }
         .nav-btn span:last-child {
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, #7b4b9a, #9d6bc0);
+            background: linear-gradient(135deg, rgba(95,111,255,0.95), rgba(123,75,154,0.95));
             opacity: 0;
-            transition: opacity 0.3s ease;
-            border-radius: 30px;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            border-radius: 999px;
+            transform: scale(0.95);
         }
         .nav-btn:hover, .nav-btn.active {
-            color: white;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.25);
         }
         .nav-btn:hover span:last-child, .nav-btn.active span:last-child {
             opacity: 1;
+            transform: scale(1);
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.12);
         }
         .nav-links { display: flex; gap: 4px; }
 
         .profile-card {
-            border: 1px solid rgba(255,255,255,0.15);
-            background: #0a0a0a;
+            border: 1px solid var(--line);
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
             transform-style: preserve-3d;
             transition: transform 0.2s ease;
             will-change: transform;
             border-radius: 16px;
             overflow: hidden;
+            box-shadow: var(--shadow);
         }
         .profile-card:hover {
-            border-color: #7b4b9a;
+            border-color: var(--accent);
         }
 
         .contact-link {
             border-radius: 30px;
             transition: all 0.3s ease;
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
         }
         .contact-link:hover {
-            border-color: #7b4b9a;
+            border-color: var(--accent);
             transform: translateY(-2px);
-            box-shadow: 0 0 15px rgba(123,75,154,0.3);
+            box-shadow: 0 0 15px rgba(95,111,255,0.16);
         }
 
         .btn-outline {
-            border: 1px solid rgba(123,75,154,0.6);
-            background: transparent;
+            border: 1px solid rgba(95,111,255,0.35);
+            background: rgba(255,255,255,0.08);
             transition: all 0.3s ease;
             border-radius: 4px;
+            color: var(--text);
         }
         .btn-outline:hover {
-            background: #7b4b9a;
-            color: black;
-            border-color: #7b4b9a;
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
             transform: translateY(-1px);
-            box-shadow: 0 0 15px rgba(123,75,154,0.4);
+            box-shadow: 0 0 15px rgba(95,111,255,0.16);
         }
 
         .focus-tag {
             transition: all 0.2s ease;
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
         }
         .focus-tag:hover {
-            border-color: #7b4b9a;
-            color: #7b4b9a;
+            border-color: var(--accent);
+            color: var(--accent);
             transform: translateY(-1px);
         }
 
@@ -370,7 +429,7 @@
         .org-stat-number {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #7b4b9a;
+            color: #0e37b2;
         }
         .org-stat-label {
             font-size: 0.6rem;
@@ -379,12 +438,32 @@
         }
 
         .opsec-warning-raw {
-            background: #000000;
-            border-left: 2px solid #ffffff;
+            background: rgba(255,255,255,0.08);
+            border-left: 2px solid var(--accent);
             padding: 1rem;
             margin-bottom: 2rem;
             font-size: 0.7rem;
-            color: #cccccc;
+            color: var(--muted);
+        }
+
+        .text-gray-300, .text-gray-400, .text-gray-500, .text-gray-600, .text-gray-700 {
+            color: var(--muted) !important;
+        }
+        .text-white {
+            color: var(--text) !important;
+        }
+        .border-white\/10, .border-white\/20, .border-white\/30 {
+            border-color: var(--line) !important;
+        }
+
+        .text-gray-300, .text-gray-400, .text-gray-500, .text-gray-600, .text-gray-700 {
+            color: var(--muted) !important;
+        }
+        .text-white {
+            color: var(--text) !important;
+        }
+        .border-white\/10, .border-white\/20, .border-white\/30 {
+            border-color: var(--line) !important;
         }
 
         @media (max-width: 768px) {
@@ -394,6 +473,7 @@
 </head>
 <body>
 
+    <div id="magnetDots" class="magnet-dots" aria-hidden="true"></div>
     <div class="scanline"></div>
 
     <div id="music-start" onclick="startMusic()">
@@ -421,21 +501,21 @@
         </div>
     </div>
 
-    <div class="container mx-auto px-6 max-w-7xl pt-24 pb-20">
+    <div class="container mx-auto px-6 max-w-7xl pt-12 pb-16">
 
         <!-- HERO SECTION -->
-        <section id="home" class="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-100px)] mb-0 reveal active">
+        <section id="home" class="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(88vh-100px)] mb-8 reveal active">
             <div class="corner-bracket p-6">
                 <div>
                     <h1 class="text-5xl md:text-6xl lg:text-7xl font-mono tracking-tighter whitespace-nowrap pb-2">
-                        <span class="halo-text">ꋊꄂꋖꋊꋫ</span>
+                        <span class="halo-text">ꀔꈈ</span>
                     </h1>
                 </div>
                 <div class="text-sm text-gray-400 mb-6 mt-6 tracking-widest uppercase border-l-2 border-[#7b4b9a] pl-4">
                     <span class="typewriter-text">recon · scan · build · gray hat</span>
                 </div>
                 <p class="text-gray-300 mb-6 leading-relaxed max-w-xl">
-                    <span class="font-bold text-white">Specializing in reconnaissance, endpoint discovery, and tool development.</span> Part of <span style="color: #7b4b9a; font-weight: bold;">ꇦꁝꄲꇦꋖ</span> — building tools that don't exist anywhere else.
+                    <span class="font-bold text-white">Specializing in reconnaissance, endpoint discovery, and tool development.</span> Part of <span style="color: #0e37b2; font-weight: bold;">ꇦꁝꄲꇦꋖ</span> — building tools that don't exist anywhere else.
                 </p>
                 <p class="text-gray-500 mb-8 text-sm italic">No public archives. Operations only.</p>
                 <div class="flex flex-wrap gap-4 mb-12">
@@ -447,9 +527,9 @@
                     </button>
                 </div>
                 <div class="flex gap-12 text-sm">
-                    <div><span style="color: #7b4b9a;" class="text-3xl font-bold">62+</span><span class="block text-gray-500 text-xs">PRIVATE TOOLS</span></div>
-                    <div><span style="color: #7b4b9a;" class="text-3xl font-bold">5k</span><span class="block text-gray-500 text-xs">TARGETS MAPPED</span></div>
-                    <div><span style="color: #7b4b9a;" class="text-4xl font-bold">+2k</span><span class="block text-gray-500 text-xs">ENDPOINTS</span></div>
+                    <div><span style="color: #0e37b2;" class="text-3xl font-bold">62+</span><span class="block text-gray-500 text-xs">PRIVATE TOOLS</span></div>
+                    <div><span style="color: #0e37b2;" class="text-3xl font-bold">5k</span><span class="block text-gray-500 text-xs">TARGETS MAPPED</span></div>
+                    <div><span style="color: #0e37b2;" class="text-4xl font-bold">+2k</span><span class="block text-gray-500 text-xs">ENDPOINTS</span></div>
                 </div>
             </div>
 
@@ -468,16 +548,16 @@
                     </div>
                     <div class="pt-16 pb-6 px-4">
                         <div class="text-2xl font-bold text-white mb-1 font-gothic">
-                            <span class="halo-text">ꋊꄂꋖꋊꋫ </span>
+                            <span class="halo-text">ꀔꈈ </span>
                         </div>
-                        <div class="text-[#b5bac1] text-sm mb-1">@ech0.sys</div>
-                        <div class="text-[#b5bac1] text-xs mb-4">localhost:8080</div>
+                        <div class="text-[#b5bac1] text-sm mb-1">@ujo6</div>
+                        <div class="text-[#b5bac1] text-xs mb-4">ꃅꏁꏂꌠꃅꏁꏂꌠ</div>
                         <div class="space-y-4">
                             <div>
                                 <h4 class="text-[#b5bac1] text-xs font-bold uppercase mb-1">About Me</h4>
                                 <p class="text-[#dbdee1] text-sm leading-relaxed">
-                                    Иногда легко размышлять о будущем, но забыть о прошлом...<br><br>
-                                    I don't break in. I draw the blueprints.<br>recon • osint • tooling
+                                    ꀊꂵꄿꎜꏂꎵ ꀊꄓꈌꏃꎜꄿ...<br><br>
+                                    I don't break in.<br>recon • osint • tooling
                                 </p>
                             </div>
                             <div>
@@ -495,7 +575,7 @@
         </section>
 
         <!-- TECH MARQUEE -->
-        <div class="w-screen relative left-[calc(-50vw+50%)] overflow-hidden py-4 border-y border-white/10 my-16">
+        <div class="w-screen relative left-[calc(-50vw+50%)] overflow-hidden py-3 border-y border-white/10 my-8">
             <div class="marquee-track-no-pause" id="marquee-content"></div>
         </div>
 
@@ -678,6 +758,63 @@
     </div>
 
     <script>
+        const magnetDots = document.getElementById('magnetDots');
+        const dotCount = 260;
+        const dotElements = [];
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+
+        function buildMagnetDots() {
+            if (!magnetDots) return;
+            magnetDots.innerHTML = '';
+            dotElements.length = 0;
+            for (let i = 0; i < dotCount; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'magnet-dot';
+                dot.style.left = `${Math.random() * 100}%`;
+                dot.style.top = `${Math.random() * 100}%`;
+                dot.style.opacity = `${0.3 + Math.random() * 0.5}`;
+                magnetDots.appendChild(dot);
+                dotElements.push(dot);
+            }
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateMagnetDots() {
+            const radius = 140;
+            const maxPull = 18;
+
+            dotElements.forEach((dot) => {
+                const rect = dot.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+                const dx = mouseX - x;
+                const dy = mouseY - y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const strength = dist < radius ? Math.max(0, 1 - dist / radius) : 0;
+                const pull = strength * maxPull;
+                const angle = Math.atan2(dy, dx);
+                const moveX = Math.cos(angle) * pull;
+                const moveY = Math.sin(angle) * pull;
+                const size = 3 + strength * 2.5;
+
+                dot.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                dot.style.background = strength > 0.15 ? 'rgba(95,111,255,0.95)' : 'rgba(120,125,140,0.35)';
+            });
+
+            requestAnimationFrame(animateMagnetDots);
+        }
+
+        buildMagnetDots();
+        animateMagnetDots();
+        window.addEventListener('resize', buildMagnetDots);
+
         // Animated page title
         let titleIndex = 0;
         const titles = [
@@ -782,7 +919,7 @@
             { name: 'Wfuzz', icon: 'fa-solid fa-bolt' }
         ];
         const marqueeEl = document.getElementById('marquee-content');
-        for (let copy = 0; copy < 3; copy++) {
+        for (let copy = 0; copy < 2; copy++) {
             techStack.forEach(t => {
                 let div = document.createElement('div');
                 div.className = 'flex items-center gap-2 text-gray-400 text-xs uppercase tracking-wider mx-4';
